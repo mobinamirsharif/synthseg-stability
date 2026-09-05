@@ -1,0 +1,5 @@
+condition,n_acquisitions,mean_standard_macro_dice,mean_robust_macro_dice,mean_robust_minus_standard_pp
+lowres_2mm,2,87.860,88.465,0.605
+lowres_3mm,2,88.645,89.485,0.840
+noise_mild,2,98.875,99.070,0.195
+noise_moderate,2,97.745,98.310,0.565

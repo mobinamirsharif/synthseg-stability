@@ -1,0 +1,5 @@
+condition,n_acquisitions,mean_standard_absolute_volume_drift_pct,mean_robust_absolute_volume_drift_pct,mean_robust_minus_standard_pp
+lowres_2mm,2,3.4060,1.8560,-1.5500
+lowres_3mm,2,4.4370,4.0010,-0.4360
+noise_mild,2,0.4590,0.3110,-0.1480
+noise_moderate,2,0.9085,0.6230,-0.2855

@@ -1,0 +1,85 @@
+name: Validate repository
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Compile public scripts
+        run: python -m compileall -q scripts
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Check public tree for participant-level data and medical images
+        run: |
+          if git grep -n -I -E 'Subject ?1|Subject ?2|subject1|subject2|[0-9]{3}_S_[0-9]{4}|(^|[^A-Za-z0-9])I[0-9]{5}([^0-9]|$)' -- ':!.github/workflows/validate.yml'; then
+            echo "Participant-level label or identifier found in the public tree."
+            exit 1
+          fi
+          if git ls-files | grep -E '\.(nii|nii\.gz|mgz|mgh)$'; then
+            echo "Medical-image file found in the public tree."
+            exit 1
+          fi
+
+          private_files=$(git ls-files \
+            'results/phase2/supporting/*.csv' \
+            'results/phase2/two_subject*.csv' \
+            'results/phase3/*.csv' \
+            'figures/phase2/two_subject*.png' \
+            'figures/phase3/*.png')
+          if [ -n "$private_files" ]; then
+            echo "Participant-level artifacts are tracked:"
+            echo "$private_files"
+            exit 1
+          fi
+
+      - name: Validate final artifacts
+        shell: python
+        run: |
+          import csv
+          from pathlib import Path
+
+          csv_files = [
+              Path("results/phase2/aggregate_macro_dice.csv"),
+              Path("results/phase2/aggregate_volume_drift.csv"),
+          ]
+          png_files = [
+              Path("figures/phase2/aggregate_macro_dice.png"),
+              Path("figures/phase2/aggregate_volume_drift.png"),
+          ]
+
+          missing = [str(path) for path in csv_files + png_files if not path.is_file()]
+          if missing:
+              raise SystemExit("Missing required artifacts:\n- " + "\n- ".join(missing))
+
+          empty = [str(path) for path in csv_files + png_files if path.stat().st_size == 0]
+          if empty:
+              raise SystemExit("Empty required artifacts:\n- " + "\n- ".join(empty))
+
+          for path in csv_files:
+              with path.open(newline="", encoding="utf-8") as handle:
+                  reader = csv.reader(handle)
+                  header = next(reader, None)
+                  first_row = next(reader, None)
+              if not header or first_row is None:
+                  raise SystemExit(f"CSV has no header or data rows: {path}")
+
+          print("All required final artifacts are present and readable.")

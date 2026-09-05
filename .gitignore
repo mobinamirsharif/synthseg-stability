@@ -1,0 +1,54 @@
+# Local Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Medical images and segmentation volumes are retained locally but are not
+# distributed in the public repository. Result CSVs and figures remain tracked.
+*.nii
+*.nii.gz
+*.mgz
+*.mgh
+
+# Historical one-off scripts contain workstation-specific absolute paths.
+# They remain on disk for provenance, while scripts/ is the public,
+# configurable reproducibility interface. These explicit rules ensure future
+# Python files elsewhere are not silently ignored.
+/build_two_subject_summary.py
+/compute_two_subject_volume_drift.py
+/plot_two_subject_summary.py
+/plot_two_subject_volume_drift.py
+
+# Local participant-level and historical experiment directories.
+/bias_field_test/
+/stress_test/
+/subject[0-9]/
+/output/
+/tests/autocrop/
+/tests/fast/
+/tests/parc/
+/tests/robust/
+
+# Participant-level regional volumes used locally to derive aggregate medians.
+/results/phase2/two_subject_volume_drift_detail.csv
+
+# Participant-level derived tables and figures retained locally but excluded
+# from the aggregate-only public repository.
+/results/phase2/supporting/
+/results/phase2/two_subject_summary.csv
+/results/phase2/two_subject_volume_drift_summary.csv
+/results/phase3/phase3_summary.csv
+/figures/phase2/two_subject_macro_dice.png
+/figures/phase2/two_subject_volume_drift.png
+/figures/phase3/phase3_macro_dice.png
+/figures/phase3/phase3_volume_drift.png
