@@ -9,12 +9,14 @@ import numpy as np
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-ORDER = [
-    "resolution_2mm", "resolution_3mm", "noise_mild", "noise_moderate",
-    "bias_moderate", "bias_strong", "bias_strong_n4",
-]
-LABELS = ["2 mm", "3 mm", "Noise 5%", "Noise 10%", "Moderate bias", "Strong bias", "Strong bias + N4"]
-COLORS = {"standard": "#2878B5", "robust": "#E07A1F"}
+GROUPS = (
+    ("Resolution", ("resolution_2mm", "resolution_3mm"), ("2 mm", "3 mm")),
+    ("Noise", ("noise_mild", "noise_moderate"), ("Noise 5%", "Noise 10%")),
+    ("Bias", ("bias_moderate", "bias_strong", "bias_strong_n4"),
+     ("Moderate\nbias", "Strong\nbias", "Strong bias\n+ N4")),
+)
+COLORS = {"standard": "#2474A6", "robust": "#E67E22"}
+MEAN_COLOR = "#8E2C2C"
 
 
 def parse_args():
@@ -29,34 +31,67 @@ def read_rows(path):
         return list(csv.DictReader(handle))
 
 
-def paired_plot(rows, metric, ylabel, filename, scale=1.0):
+def style_axis(axis):
+    axis.set_facecolor("white")
+    axis.spines[["top", "right"]].set_visible(False)
+    axis.grid(axis="y", color="#D9DEE3", linewidth=0.7, alpha=0.75)
+    axis.set_axisbelow(True)
+
+
+def draw_group(axis, lookup, participants, conditions, labels, ylabel, show_y_label):
+    width = 0.32
+    standard_means = []
+    robust_means = []
+    for x, condition in enumerate(conditions):
+        standard = np.asarray([lookup[(participant, condition, "standard")] for participant in participants])
+        robust = np.asarray([lookup[(participant, condition, "robust")] for participant in participants])
+        standard_mean = float(np.mean(standard))
+        robust_mean = float(np.mean(robust))
+        standard_means.append(standard_mean)
+        robust_means.append(robust_mean)
+        mean_difference = float(np.mean(robust - standard))
+        axis.annotate(
+            f"Δ {mean_difference:+.2f} pp", xy=(x, max(standard_mean, robust_mean)),
+            xytext=(0, 8), textcoords="offset points", ha="center", va="bottom",
+            fontsize=8, color=MEAN_COLOR, annotation_clip=False,
+        )
+
+    positions = np.arange(len(conditions))
+    axis.bar(positions - width / 2, standard_means, width, color=COLORS["standard"], label="Standard", zorder=2)
+    axis.bar(positions + width / 2, robust_means, width, color=COLORS["robust"], label="Robust", zorder=2)
+    if show_y_label:
+        axis.set_ylabel(ylabel)
+    axis.set_xticks(positions, labels)
+    axis.tick_params(axis="x", pad=7)
+    axis.set_xlim(-0.55, len(labels) - 0.45)
+    highest = max(standard_means + robust_means)
+    axis.set_ylim(0, highest + max(highest * 0.045, 0.16))
+    style_axis(axis)
+
+
+def paired_plot(rows, metric, ylabel, filename, scale=1.0, title="OpenNeuro public replication"):
     lookup = {(r["participant"], r["condition"], r["mode"]): float(r[metric]) * scale for r in rows}
     participants = sorted({r["participant"] for r in rows})
-    fig, (ax, delta) = plt.subplots(2, 1, figsize=(11, 8), sharex=True, gridspec_kw={"height_ratios": [3, 1]})
-    for x, condition in enumerate(ORDER):
-        offsets = np.linspace(-0.16, 0.16, max(len(participants), 1))
-        differences = []
-        for offset, participant in zip(offsets, participants):
-            standard = lookup[(participant, condition, "standard")]
-            robust = lookup[(participant, condition, "robust")]
-            ax.plot([x - 0.13 + offset / 4, x + 0.13 + offset / 4], [standard, robust], color="#A7A7A7", lw=0.8, zorder=1)
-            ax.scatter(x - 0.13 + offset / 4, standard, color=COLORS["standard"], marker="o", s=28, zorder=2)
-            ax.scatter(x + 0.13 + offset / 4, robust, color=COLORS["robust"], marker="D", s=25, zorder=2)
-            differences.append(robust - standard)
-        delta.scatter(np.full(len(differences), x), differences, color="#3F3F3F", s=24)
-        delta.plot([x - 0.2, x + 0.2], [np.mean(differences)] * 2, color="#B22222", lw=2)
-    ax.scatter([], [], color=COLORS["standard"], marker="o", label="Standard")
-    ax.scatter([], [], color=COLORS["robust"], marker="D", label="Robust")
-    ax.set_ylabel(ylabel)
-    ax.set_title("OpenNeuro ds005125 public replication")
-    ax.grid(axis="y", alpha=0.25)
-    ax.legend(frameon=False, ncol=2)
-    delta.axhline(0, color="#777777", lw=0.8)
-    delta.set_ylabel("Robust −\nStandard")
-    delta.set_xticks(range(len(LABELS)), LABELS, rotation=25, ha="right")
-    delta.grid(axis="y", alpha=0.25)
-    fig.tight_layout()
-    fig.savefig(filename, dpi=220)
+    fig, axes = plt.subplots(1, 3, figsize=(14, 5.15), gridspec_kw={"width_ratios": [2, 2, 3]})
+    fig.patch.set_facecolor("white")
+    for column, (group_title, conditions, labels) in enumerate(GROUPS):
+        draw_group(
+            axes[column], lookup, participants, conditions, labels,
+            ylabel, show_y_label=column == 0,
+        )
+        axes[column].set_title(group_title, fontsize=10.5, fontweight="bold", pad=7)
+
+    handles = [
+        plt.Rectangle((0, 0), 1, 1, color=COLORS["standard"], label="Standard"),
+        plt.Rectangle((0, 0), 1, 1, color=COLORS["robust"], label="Robust"),
+    ]
+    fig.suptitle(title, fontsize=12.5, fontweight="bold", y=0.985)
+    fig.legend(
+        handles=handles, loc="upper center", bbox_to_anchor=(0.5, 0.94),
+        ncol=2, frameon=False, fontsize=9, handletextpad=0.5, columnspacing=1.2,
+    )
+    fig.subplots_adjust(left=0.065, right=0.992, bottom=0.13, top=0.79, wspace=0.18)
+    fig.savefig(filename, dpi=300, facecolor="white", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -66,8 +101,15 @@ def main():
     if not rows:
         raise ValueError("No non-clean public records to plot")
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    paired_plot(rows, "clean_reference_macro_dice", "Clean-reference macro Dice (%)", args.output_dir / "clean_reference_dice.png", scale=100)
-    paired_plot(rows, "mean_absolute_volume_drift_pct", "Mean absolute volume drift (%)", args.output_dir / "mean_volume_drift.png")
+    paired_plot(
+        rows, "clean_reference_macro_dice", "Macro Dice (%)",
+        args.output_dir / "clean_reference_dice.png", scale=100,
+        title="Clean-reference segmentation stability",
+    )
+    paired_plot(
+        rows, "mean_absolute_volume_drift_pct", "Volume drift (%)",
+        args.output_dir / "mean_volume_drift.png", title="Mean absolute volume drift",
+    )
     print(f"Saved public figures to {args.output_dir}")
 
 
