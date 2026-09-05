@@ -1,0 +1,19 @@
+{
+  "dataset_id": "ds005125",
+  "snapshot": "1.0.0",
+  "doi": "10.18112/openneuro.ds005125.v1.0.0",
+  "name": "The brain hierarchically represents the past and future during multistep anticipation",
+  "license": "CC0-1.0",
+  "source": "https://openneuro.org/datasets/ds005125/versions/1.0.0",
+  "download_base": "https://s3.amazonaws.com/openneuro.org/ds005125",
+  "selection_rule": "First four available T1w participants in lexical BIDS identifier order",
+  "participants": ["sub-01", "sub-02", "sub-03", "sub-04"],
+  "sha256": {
+    "sub-01": "e281464f597e709020e556cb6699600312a9bbe843a32a9d678ac8c7eb5ec778",
+    "sub-02": "f6c40cdf18dabd4b3f18db2c7d7f03b0434bc89d8f99d7f64743d3ba905cb2c8",
+    "sub-03": "bf3616851a2a55c3343a4e7aee10087c717182edda8bb2c71c19bbc67555861c",
+    "sub-04": "ee5745d367abc16632300a6da2d4aea22a82475eadd22bb416bda7925642c16b"
+  },
+  "modality": "T1w",
+  "acquisition": "3D T1-weighted MRI; Siemens Prisma 3 T; 1 mm slice thickness"
+}

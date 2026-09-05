@@ -1,8 +1,25 @@
 cff-version: 1.2.0
-message: "If you use this repository, please cite it and the SynthSeg papers listed in the README."
-title: "SynthSeg Stability Experiments on ADNI T1 MRI"
+message: "If you use this repository, cite it, the OpenNeuro dataset, and the SynthSeg papers listed in the README."
+title: "SynthSeg robustness and stability study"
 type: software
 authors:
   - family-names: Mirsharif
     given-names: Mobina
 repository-code: "https://github.com/mobinamirsharif/synthseg-stability"
+references:
+  - type: dataset
+    title: "The brain hierarchically represents the past and future during multistep anticipation"
+    authors:
+      - family-names: Tarder-Stoll
+        given-names: Hannah
+      - family-names: Baldassano
+        given-names: Christopher
+      - family-names: Aly
+        given-names: Mariam
+    doi: "10.18112/openneuro.ds005125.v1.0.0"
+  - type: article
+    title: "SynthSeg: Segmentation of brain MRI scans of any contrast and resolution without retraining"
+    doi: "10.1016/j.media.2023.102789"
+  - type: article
+    title: "Robust machine learning segmentation for large-scale analysis of heterogeneous clinical brain MRI datasets"
+    doi: "10.1073/pnas.2216399120"

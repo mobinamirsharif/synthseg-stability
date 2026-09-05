@@ -35,8 +35,8 @@ def read_rows(relative_path):
         return list(csv.DictReader(handle))
 
 
-def test_public_phase2_aggregate_dice_values():
-    rows = read_rows("results/phase2/aggregate_macro_dice.csv")
+def test_restricted_phase2_aggregate_dice_values_are_preserved():
+    rows = read_rows("results/restricted/phase2/aggregate_macro_dice.csv")
     actual = {
         row["condition"]: (
             int(row["n_acquisitions"]),
@@ -49,8 +49,8 @@ def test_public_phase2_aggregate_dice_values():
     assert actual == EXPECTED_DICE
 
 
-def test_public_phase2_aggregate_volume_drift_values():
-    rows = read_rows("results/phase2/aggregate_volume_drift.csv")
+def test_restricted_phase2_aggregate_volume_drift_values_are_preserved():
+    rows = read_rows("results/restricted/phase2/aggregate_volume_drift.csv")
     actual = {
         row["condition"]: (
             int(row["n_acquisitions"]),
@@ -73,6 +73,27 @@ def test_private_result_artifacts_are_not_tracked():
     assert not any(path.startswith("results/phase2/supporting/") for path in tracked)
 
 
-def test_public_figures_exist():
-    assert (ROOT / "figures/phase2/aggregate_macro_dice.png").is_file()
-    assert (ROOT / "figures/phase2/aggregate_volume_drift.png").is_file()
+def test_restricted_aggregate_figures_exist():
+    assert (ROOT / "figures/restricted/phase2/aggregate_macro_dice.png").is_file()
+    assert (ROOT / "figures/restricted/phase2/aggregate_volume_drift.png").is_file()
+
+
+def test_completed_public_artifacts_are_consistent():
+    subject_rows = read_rows("results/public/subject_level/results.csv")
+    aggregate_rows = read_rows("results/public/aggregate/summary.csv")
+    cohort_rows = read_rows("results/public/aggregate/cohort_summary.csv")
+    assert len(subject_rows) == 64
+    assert len(aggregate_rows) == 16
+    assert len(cohort_rows) == 8
+    assert {row["participant"] for row in subject_rows} == {
+        "sub-01", "sub-02", "sub-03", "sub-04"
+    }
+    assert {int(row["label_count"]) for row in subject_rows} == {32}
+    assert {int(row["n_participants"]) for row in aggregate_rows} == {4}
+    assert {int(row["n_participants"]) for row in cohort_rows} == {4}
+    for filename in (
+        "clean_reference_dice.png", "mean_volume_drift.png", "public_qc_contact_sheet.png"
+    ):
+        path = ROOT / "figures/public" / filename
+        assert path.is_file()
+        assert path.stat().st_size > 0

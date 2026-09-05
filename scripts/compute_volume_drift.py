@@ -39,10 +39,14 @@ def compute_volume_drifts(clean, test):
 
 def summarize_absolute_drifts(drifts):
     values = np.abs(list(drifts.values()))
+    if len(values) == 0:
+        raise ValueError("No shared metrics with a non-zero clean reference")
     return {
         "count": len(values),
         "mean": float(np.mean(values)),
         "median": float(np.median(values)),
+        "iqr": float(np.percentile(values, 75) - np.percentile(values, 25)),
+        "maximum": float(np.max(values)),
     }
 
 
@@ -57,6 +61,8 @@ def main():
     print(f"Metrics evaluated: {summary['count']}")
     print(f"Mean absolute volume drift: {summary['mean']:.3f}%")
     print(f"Median absolute volume drift: {summary['median']:.3f}%")
+    print(f"IQR absolute volume drift: {summary['iqr']:.3f} percentage points")
+    print(f"Maximum absolute volume drift: {summary['maximum']:.3f}%")
 
 
 if __name__ == "__main__":

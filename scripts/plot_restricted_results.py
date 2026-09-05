@@ -1,4 +1,4 @@
-"""Regenerate the public aggregate-only Phase 2 figures."""
+"""Regenerate the approved restricted-data aggregate Phase 2 figures."""
 
 import argparse
 import csv
@@ -60,8 +60,8 @@ def aggregate_plot(rows, standard_column, robust_column, ylabel, title, output, 
 
 
 def phase2(root):
-    results = root / "results" / "phase2"
-    figures = root / "figures" / "phase2"
+    results = root / "results" / "restricted" / "phase2"
+    figures = root / "figures" / "restricted" / "phase2"
     figures.mkdir(parents=True, exist_ok=True)
 
     aggregate_plot(
