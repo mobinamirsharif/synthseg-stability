@@ -115,10 +115,8 @@ The source artifacts are the
 
 ![Public mean absolute volume drift](figures/public/mean_volume_drift.png)
 
-![Public segmentation QC contact sheet](figures/public/public_qc_contact_sheet.png)
-
-The metric plots use paired participant points and a Robust − Standard panel,
-not truncated-baseline bars. The QC sheet uses only public OpenNeuro images.
+The metric plots show paired-cohort Standard and Robust means, with the mean
+Robust − Standard difference annotated for each condition.
 
 ## Restricted-data provenance
 
@@ -212,7 +210,6 @@ python scripts/download_public_data.py
 python -m scripts.run_public_experiment
 python scripts/summarize_public_results.py
 python scripts/plot_public_results.py
-python scripts/plot_public_qc.py
 python -m scripts.audit_public_experiment
 python -m pytest -q
 ```

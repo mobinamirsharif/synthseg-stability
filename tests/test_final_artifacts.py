@@ -91,9 +91,7 @@ def test_completed_public_artifacts_are_consistent():
     assert {int(row["label_count"]) for row in subject_rows} == {32}
     assert {int(row["n_participants"]) for row in aggregate_rows} == {4}
     assert {int(row["n_participants"]) for row in cohort_rows} == {4}
-    for filename in (
-        "clean_reference_dice.png", "mean_volume_drift.png", "public_qc_contact_sheet.png"
-    ):
+    for filename in ("clean_reference_dice.png", "mean_volume_drift.png"):
         path = ROOT / "figures/public" / filename
         assert path.is_file()
         assert path.stat().st_size > 0

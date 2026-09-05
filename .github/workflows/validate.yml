@@ -62,7 +62,6 @@ jobs:
                   Path("results/public/aggregate/cohort_summary.csv"),
                   Path("figures/public/clean_reference_dice.png"),
                   Path("figures/public/mean_volume_drift.png"),
-                  Path("figures/public/public_qc_contact_sheet.png"),
               }
               missing = [str(path) for path in expected if not path.is_file() or path.stat().st_size == 0]
               if missing:
