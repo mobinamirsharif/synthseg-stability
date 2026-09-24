@@ -1,0 +1,9 @@
+condition,n_participants,standard_mean_clean_reference_dice_pct,robust_mean_clean_reference_dice_pct,robust_minus_standard_dice_pp,standard_mean_absolute_volume_drift_pct,robust_mean_absolute_volume_drift_pct,robust_minus_standard_volume_drift_pp,standard_mean_runtime_seconds,robust_mean_runtime_seconds
+bias_moderate,4,99.501635,99.304073,-0.197563,0.283391,0.379023,0.095632,452.414,381.659
+bias_strong,4,98.993875,98.732771,-0.261103,0.560902,0.762468,0.201565,465.899,386.797
+bias_strong_n4,4,99.499614,99.335134,-0.164480,0.257542,0.310065,0.052523,461.039,392.221
+clean,4,100.000000,100.000000,0.000000,0.000000,0.000000,0.000000,477.816,381.949
+noise_mild,4,98.847180,98.906178,0.058998,0.384323,0.323265,-0.061058,449.131,388.400
+noise_moderate,4,97.547853,98.100379,0.552527,0.993846,0.719478,-0.274368,445.072,384.111
+resolution_2mm,4,85.510309,86.189172,0.678863,6.663702,3.151792,-3.511909,491.024,401.841
+resolution_3mm,4,85.036414,86.367829,1.331416,8.741411,5.870444,-2.870967,536.708,436.796

@@ -1,0 +1,31 @@
+# Local Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+/data/
+/work/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Medical images and segmentation volumes are retained locally but are not
+# distributed in the public repository. Result CSVs and figures remain tracked.
+*.nii
+*.nii.gz
+*.mgz
+*.mgh
+
+# Local or controlled-access inputs, outputs, manifests, and reports.
+/data/
+/output/
+/outputs/
+/local-results/
+/private-results/
+/manifests/
