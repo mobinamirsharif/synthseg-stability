@@ -16,6 +16,16 @@ included in this repository.
 No manual segmentation ground truth is used in the public experiments.
 Internal SynthSeg QC scores are not voxel-wise accuracy measures.
 
+## Repository history note
+
+This repository was rebuilt from a clean root commit on September 25, 2026,
+following a data-governance review. Earlier development history was
+intentionally discarded because it contained artifacts and implementation
+traces associated with controlled-access dataset work. The visible commit
+count therefore represents the sanitized publication history, not the full
+duration or scope of the project. The current tree contains only material that
+is suitable for release with public or synthetic inputs.
+
 ## Research question
 
 How stable are SynthSeg outputs when the same T1-weighted anatomy is subjected
